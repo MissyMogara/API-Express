@@ -1,0 +1,27 @@
+version: "3"
+services:
+  nodeapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: "nodejs"
+    user: "node"
+    working_dir: /home/node/app
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - .:/home/node/app
+      - /home/node/app/node_modules
+    ports:
+      - "3000:3000"
+
+  #MongoDB
+  mongo:
+    container_name: mongodb
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: toor
+    ports:
+      - "27017:27017"
