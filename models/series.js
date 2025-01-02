@@ -43,7 +43,7 @@ const SeriesSchema = Schema({
     },
     imagen: {
         type: String,
-        required: true
+        required: false
     }
 });
 
