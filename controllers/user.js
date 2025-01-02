@@ -1,5 +1,6 @@
 const bcryptjs = require('bcryptjs');
 const User = require('../models/user');
+const jwt = require('../services/jwt');
 
 // Register users
 async function register(req, res) {
@@ -25,6 +26,25 @@ async function register(req, res) {
     }
 }
 
+// Login users
+async function login(req, res) {
+    const { email, password } = req.body;
+    
+    try {
+        const user = await User.findOne({ email });
+        if(!user) throw { message: "Error en el email o la contraseña"};
+
+        const passwordSuccess = await bcryptjs.compare(password, user.password);
+        if(!passwordSuccess) throw { message: "Error en el email o la contraseña"};
+        
+        res.status(200).send({ token: jwt.createToken(user, "12h") });
+
+    } catch (error) {
+        res.status(500).send(error);
+    }
+}
+
 module.exports = {
     register,
+    login,
 };
