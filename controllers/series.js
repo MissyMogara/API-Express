@@ -150,6 +150,50 @@ async function deleteSerie(req, res) {
     }
 }
 
+async function uploadImage(req, res) {
+    const { id } = req.params;
+
+    try {
+        const serieData = await Series.findById(id);
+
+        if (!serieData) {
+            return res.status(404).send({ message: "Serie no encontrada" });
+        }
+
+        if (!req.files || !req.files.imagen) {
+            return res.status(400).send({ message: "No se ha subido ninguna imagen" });
+        }
+
+        const filePath = req.files.imagen.path;
+        const fileSplit = filePath.split('\\');
+        const fileName = fileSplit[fileSplit.length - 1];
+
+        // Validate extension
+        const extSplit = fileName.split('.');
+        const fileExt = extSplit[extSplit.length - 1].toLowerCase();
+
+        if (fileExt !== "png" && fileExt !== "jpg") {
+            return res.status(400).send({ message: "Extensión del archivo no válida" });
+        }
+
+        // Update serie with new image
+        serieData.imagen = fileName;
+        const serieResult = await Series.findByIdAndUpdate(id, serieData, { new: true });
+
+        if (!serieResult) {
+            return res.status(404).send({ message: "Serie no encontrada" });
+        }
+
+        return res.status(200).send({
+            message: "Serie actualizada",
+            avatar: serieResult.imagen,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({ message: "Error interno del servidor" });
+    }
+}
+
 module.exports = {
     createSerie,
     getSeries,
@@ -158,5 +202,6 @@ module.exports = {
     getSerieByID,
     addScore,
     deleteSerie,
+    uploadImage,
 };
 

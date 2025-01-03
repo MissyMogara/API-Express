@@ -1,3 +1,5 @@
+const fs = require("fs");
+const path = require("path");
 const bcryptjs = require('bcryptjs');
 const User = require('../models/user');
 const jwt = require('../services/jwt');
@@ -44,14 +46,68 @@ async function login(req, res) {
     }
 }
 
+// Upload avatars
+async function uploadAvatar(req, res) {
+    const { id } = req.params;
 
-function protected(req, res) {
-    res.status(200).send({ message: "Contenido protegido"});
+    try {
+        const userData = await User.findById(id);
+        
+        if (!userData) {
+            return res.status(404).send({ message: "No se encontró el usuario" });
+        }
+
+        if (!req.files || !req.files.avatar) {
+            return res.status(400).send({ message: "No se ha enviado un archivo" });
+        }
+
+        const filePath = req.files.avatar.path;
+        const fileSplit = filePath.split('\\');
+        const fileName = fileSplit[fileSplit.length - 1]; // File name
+
+        // Validate extension
+        const extSplit = fileName.split('.');
+        const fileExt = extSplit[extSplit.length - 1].toLowerCase();
+
+        if (fileExt !== "png" && fileExt !== "jpg") {
+            return res.status(400).send({ message: "Extensión del archivo no válida" });
+        }
+
+        // Update avatar
+        userData.avatar = fileName;
+        const userResult = await User.findByIdAndUpdate(id, userData, { new: true });
+
+        if (!userResult) {
+            return res.status(404).send({ message: "No se encontró el usuario para actualizar" });
+        }
+
+        return res.status(200).send({
+            message: "Avatar actualizado",
+            avatar: userResult.avatar,
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send({ message: "Error interno del servidor" });
+    }
 }
 
+function getAvatar(req, res) {
+    const { avatarName } = req.params;
+    const filePath = `./uploads/avatars/${avatarName}`;
+
+    fs.stat(filePath, (err, stat) =>{
+        if(err){
+            res.status(404).send({ message: "El avatar no existe"});
+        } else {
+            res.sendFile(path.resolve(filePath));
+        }
+    });
+}
 
 module.exports = {
     register,
     login,
-    protected,
+    uploadAvatar,
+    getAvatar,
 };
