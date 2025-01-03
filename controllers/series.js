@@ -176,8 +176,12 @@ async function uploadImage(req, res) {
             return res.status(400).send({ message: "Extensión del archivo no válida" });
         }
 
+        // URL
+        const baseUrl = `${req.protocol}://${req.get('host')}/api/uploads/series`;
+        const imageUrl = `${baseUrl}/${fileName}`;
+
         // Update serie with new image
-        serieData.imagen = fileName;
+        serieData.imagen = imageUrl;
         const serieResult = await Series.findByIdAndUpdate(id, serieData, { new: true });
 
         if (!serieResult) {
