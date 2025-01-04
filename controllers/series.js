@@ -2,7 +2,6 @@ const Series = require("../models/series");
 
 // Create a new serie
 async function createSerie(req, res) {
-    console.log("Creando serie");
     const serie = new Series();
     const param = req.body
 
@@ -43,7 +42,16 @@ async function getSeries(req, res) {
                 message: "Error al obtener las series."
             });
         } else {
-            res.status(200).send(series);
+        // Modify every serie to have the full URL
+        const baseURL = `${req.protocol}://${req.get('host')}/api/uploads/series/`;
+        const seriesWithImageURL = series.map((serie) => {
+            return {
+                ...serie._doc, // Copy serie data (._doc only in Mongoose)
+                imagen: serie.imagen ? baseURL + serie.imagen : null, // Make the URL
+            };
+        });
+
+        return res.status(200).send(seriesWithImageURL);
         }
     } catch (error) {
         res.status(500).send(error);
@@ -177,8 +185,9 @@ async function uploadImage(req, res) {
         }
 
         // URL
-        const baseUrl = `${req.protocol}://${req.get('host')}/api/uploads/series`;
-        const imageUrl = `${baseUrl}/${fileName}`;
+        //const baseUrl = `${req.protocol}://${req.get('host')}/api/uploads/series`;
+        //const imageUrl = `${baseUrl}/${fileName}`;
+        const imageUrl = fileName;
 
         // Update serie with new image
         serieData.imagen = imageUrl;
