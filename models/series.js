@@ -19,7 +19,7 @@ const SeriesSchema = Schema({
     esMiniSerie: {
         type: Boolean,
         default: false,
-        required: true
+        required: false
     },
     nTemporadas: {
         type: Number,
@@ -39,7 +39,7 @@ const SeriesSchema = Schema({
     puntuacionTotal: {
         type: Number,
         default: 0,
-        required: true
+        required: false
     },
     imagen: {
         type: String,

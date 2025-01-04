@@ -68,7 +68,16 @@ async function getSeriesOrderedByScore(req, res) {
                 message: "Error al obtener las series."
             });
         } else {
-            res.status(200).send(series);
+        // Modify every serie to have the full URL
+        const baseURL = `${req.protocol}://${req.get('host')}/api/uploads/series/`;
+        const seriesWithImageURL = series.map((serie) => {
+            return {
+                ...serie._doc, // Copy serie data (._doc only in Mongoose)
+                imagen: serie.imagen ? baseURL + serie.imagen : null, // Make the URL
+            };
+        });
+
+        return res.status(200).send(seriesWithImageURL);
         }
     } catch (error) {
         res.status(500).send(error);
@@ -87,7 +96,16 @@ async function getSeriesByGenre(req, res) {
                 message: `Error al obtener las series del genero ${genero}`
             });
         } else {
-            res.status(200).send(series);
+            // Modify every serie to have the full URL
+            const baseURL = `${req.protocol}://${req.get('host')}/api/uploads/series/`;
+            const seriesWithImageURL = series.map((serie) => {
+                return {
+                    ...serie._doc, // Copy serie data (._doc only in Mongoose)
+                    imagen: serie.imagen ? baseURL + serie.imagen : null, // Make the URL
+                };
+            });
+    
+            return res.status(200).send(seriesWithImageURL);
         }
     } catch (error) {
         res.status(500).send(error);
@@ -107,7 +125,14 @@ async function getSerieByID(req, res) {
                 message: "No se encontró la serie."
             });
         } else {
-            res.status(200).send(serie);
+            // Modify the serie to have the full URL
+            const baseURL = `${req.protocol}://${req.get('host')}/api/uploads/series/`;
+            const serieWithImageURL = {
+                ...serie._doc, // Copy serie data (._doc only in Mongoose)
+                imagen: serie.imagen ? baseURL + serie.imagen : null, // Make the URL
+            };
+
+        return res.status(200).send(serieWithImageURL);
         }
     } catch (error) {
         res.status(500).send(error);
@@ -185,8 +210,6 @@ async function uploadImage(req, res) {
         }
 
         // URL
-        //const baseUrl = `${req.protocol}://${req.get('host')}/api/uploads/series`;
-        //const imageUrl = `${baseUrl}/${fileName}`;
         const imageUrl = fileName;
 
         // Update serie with new image
