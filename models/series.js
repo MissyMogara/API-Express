@@ -43,6 +43,7 @@ const SeriesSchema = Schema({
     },
     imagen: {
         type: String,
+        default: "InsertURL",
         required: false
     }
 });
