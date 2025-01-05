@@ -17,7 +17,8 @@ USER node
 COPY --chown=node:node package.json yarn.lock ./
 
 # Instalar dependencias (modo producción o desarrollo según el caso)
-RUN yarn install
+# Instalar las dependencias
+RUN yarn install --frozen-lockfile
 
 # Copiar el resto del código
 COPY --chown=node:node . .
