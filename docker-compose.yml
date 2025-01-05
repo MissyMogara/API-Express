@@ -13,8 +13,6 @@ services:
       - /home/node/app/node_modules
     ports:
       - "3000:3000"
-    networks:
-      - app-network
 
   mongo:
     container_name: mongodb
