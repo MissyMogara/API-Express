@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const app = require("./app");
 const port = 3000;
 
-const dbURI = "mongodb://root:toor@localhost:27017/multimedia?authSource=admin"; // Database URI
+const dbURI = "mongodb://root:toor@mongo:27017/multimedia?authSource=admin"; // Database URI
 
 mongoose.connect(dbURI) // Database and options
 .then(() => {
