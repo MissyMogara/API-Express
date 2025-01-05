@@ -16,8 +16,8 @@ USER node
 # Copiar dependencias
 COPY --chown=node:node package.json yarn.lock ./
 
-# Instalar dependencias en modo producción
-RUN yarn workspaces focus --all --production
+# Instalar dependencias (modo producción o desarrollo según el caso)
+RUN yarn install
 
 # Copiar el resto del código
 COPY --chown=node:node . .
