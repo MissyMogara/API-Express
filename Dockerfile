@@ -17,7 +17,6 @@ USER node
 COPY --chown=node:node package.json yarn.lock ./
 
 # Instalar dependencias (modo producción o desarrollo según el caso)
-# Instalar las dependencias
 RUN yarn install --frozen-lockfile
 
 # Copiar el resto del código
@@ -25,4 +24,4 @@ COPY --chown=node:node . .
 
 # Exponer puerto y comando para ejecutar
 EXPOSE 3000
-CMD ["yarn", "start"]
+CMD ["sh", "-c", "yarn install && yarn start"]
