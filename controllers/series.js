@@ -142,10 +142,12 @@ async function getSerieByID(req, res) {
 // Add more score to a single serie
 async function addScore(req, res) {
     const serieID = req.params.id;
-    const newScore = req.body.puntuacionTotal;
+    const incrementScore = req.body.puntuacionTotal;
     
     try {
-        const serie = await Series.findByIdAndUpdate(serieID, { $set: { puntuacionTotal: newScore } });
+        const serie = await Series.findByIdAndUpdate(serieID, 
+            { $inc: { puntuacionTotal: incrementScore } }, 
+            { new: true });
 
         if(!serie) {
             res.status(404).send({
